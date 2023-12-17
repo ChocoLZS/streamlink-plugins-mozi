@@ -18,3 +18,9 @@ Alternatively, individual plugins can be symlinked or downloaded to a special di
 https://portal.nicochannel.jp/ plugin for Streamlink 2.4.0 and newer versions.
 
 This plugin is copied from [streamlink/streamlink#4923](https://github.com/streamlink/streamlink/pull/4923).
+
+### ASOBISTAGE (アソビステージ)
+
+https://asobistage.asobistore.jp/ plugin for Streamlink 2.4.0 and newer versions.
+
+This plugin is copied from [streamlink/streamlink#5718](https://github.com/streamlink/streamlink/pull/5718).
