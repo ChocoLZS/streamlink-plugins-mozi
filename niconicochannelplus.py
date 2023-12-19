@@ -8,9 +8,10 @@ import logging
 import re
 
 from streamlink.exceptions import PluginError
-from streamlink.plugin import Plugin, pluginmatcher
+from streamlink.plugin import Plugin, pluginmatcher, pluginargument
 from streamlink.plugin.api import validate
 from streamlink.stream.hls import HLSStream
+
 
 log = logging.getLogger(__name__)
 
@@ -19,6 +20,20 @@ log = logging.getLogger(__name__)
     re.compile(
         r"https?://nicochannel\.jp/(?P<channel>[a-z0-9\._-]+)/(?:video|live)/(?P<id>sm[a-zA-Z0-9]+)"
     )
+)
+@pluginargument(
+    "email",
+    sensitive=True,
+    argument_name="niconicochannelplus-email",
+    metavar="EMAIL",
+    help="The email or phone number associated with your Niconico account",
+)
+@pluginargument(
+    "password",
+    sensitive=True,
+    argument_name="niconicochannelplus-password",
+    metavar="PASSWORD",
+    help="The password of your Niconico account",
 )
 class NicoNicoChannelPlus(Plugin):
     _URL_API_VIDEO_PAGE_INFO = "https://nfc-api.nicochannel.jp/fc/video_pages/{video_id}"
