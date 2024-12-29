@@ -9,7 +9,7 @@ import re
 
 from streamlink.exceptions import PluginError
 from streamlink.plugin import Plugin, pluginmatcher, pluginargument
-from streamlink.plugin.api import validate
+from streamlink.plugin.api import validate, useragents
 from streamlink.stream.hls import HLSStream
 
 
@@ -35,9 +35,16 @@ log = logging.getLogger(__name__)
     metavar="PASSWORD",
     help="The password of your Niconico account",
 )
+@pluginargument(
+    "access-token",
+    sensitive=True,
+    argument_name="niconicochannelplus-access-token",
+    metavar="ACCESS_TOKEN",
+    help="The access token of your Niconico account in auth0spajs of local storage",
+)
 class NicoNicoChannelPlus(Plugin):
-    _URL_API_VIDEO_PAGE_INFO = "https://nfc-api.nicochannel.jp/fc/video_pages/{video_id}"
-    _URL_API_SESSION_ID = "https://nfc-api.nicochannel.jp/fc/video_pages/{video_id}/session_ids"
+    _URL_API_VIDEO_PAGE_INFO = "https://api.nicochannel.jp/fc/video_pages/{video_id}"
+    _URL_API_SESSION_ID = "https://api.nicochannel.jp/fc/video_pages/{video_id}/session_ids"
     _URL_API_MASTER_PLAYLIST = "https://hls-auth.cloud.stream.co.jp/auth/index.m3u8?session_id={session_id}"
 
     def get_video_page_info(self, video_id: str) -> dict:
@@ -79,7 +86,6 @@ class NicoNicoChannelPlus(Plugin):
 
                 # These two fields are not visible for normal users.
                 log.debug(f"allow_dvr_flg = {video_allow_dvr_flg}, convert_to_vod_flg = {video_convert_to_vod_flg}.")
-
                 if video_allow_dvr_flg and video_convert_to_vod_flg:
                     # Try DVR.
                     payload = {"broadcast_type": "dvr"}
@@ -87,13 +93,17 @@ class NicoNicoChannelPlus(Plugin):
                     raise PluginError("Live was ended.")
         else:
             raise PluginError(f"Unknown video type: {video_type}")
-
+        headers = {
+            "fc_use_device": "null",
+            "origin": "https://nicochannel.jp",
+            "user-agent": useragents.CHROME,
+        }
+        access_token = self.get_option("access_token")
+        if access_token:
+            headers["authorization"] = "Bearer " + access_token
         session_id = self.session.http.post(
             self._URL_API_SESSION_ID.format(video_id=video_id),
-            headers={
-                "fc_use_device": "null",
-                "origin": "https://nicochannel.jp",
-            },
+            headers=headers,
             json=payload,
             schema=validate.Schema(
                 validate.parse_json(),
