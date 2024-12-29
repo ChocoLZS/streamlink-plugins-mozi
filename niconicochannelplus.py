@@ -86,7 +86,7 @@ class NicoNicoChannelPlus(Plugin):
 
                 # These two fields are not visible for normal users.
                 log.debug(f"allow_dvr_flg = {video_allow_dvr_flg}, convert_to_vod_flg = {video_convert_to_vod_flg}.")
-                
+
                 if video_allow_dvr_flg and video_convert_to_vod_flg:
                     # Try DVR.
                     payload = {"broadcast_type": "dvr"}
