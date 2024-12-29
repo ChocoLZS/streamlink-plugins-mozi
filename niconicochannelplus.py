@@ -86,6 +86,7 @@ class NicoNicoChannelPlus(Plugin):
 
                 # These two fields are not visible for normal users.
                 log.debug(f"allow_dvr_flg = {video_allow_dvr_flg}, convert_to_vod_flg = {video_convert_to_vod_flg}.")
+                
                 if video_allow_dvr_flg and video_convert_to_vod_flg:
                     # Try DVR.
                     payload = {"broadcast_type": "dvr"}
@@ -98,7 +99,7 @@ class NicoNicoChannelPlus(Plugin):
             "origin": "https://nicochannel.jp",
             "user-agent": useragents.CHROME,
         }
-        access_token = self.get_option("access_token")
+        access_token = self.get_option("access-token")
         if access_token:
             headers["authorization"] = "Bearer " + access_token
         session_id = self.session.http.post(
